@@ -35,11 +35,18 @@ else {
 # Load external modules
 # ////////////////////////////////////////////////////////////
 
-# Common functions for all platforms
+# Common setup for all platforms
 . ([System.IO.Path]::Combine(
 	$script_dir,
 	'conf',
 	'common-pwsh-conf.ps1'
+))
+
+# Platform-dependent setup
+. ([IO.Path]::Combine(
+	$script_dir,
+	'conf',
+	($IsMacOS ? 'macos' : ($IsWindows ? 'windows' : 'linux')) + '-pwsh-conf.ps1'
 ))
 
 # Clean up

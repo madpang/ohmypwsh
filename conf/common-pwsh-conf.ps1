@@ -14,6 +14,10 @@
 	@date:
 	- created on 2021-08-05
 	- updated on 2024-03-14
+
+	@todo:
+	- [x] Move setting of GPG_TTY to platform-specific configuration
+	- [ ] Rearrange prompt function
 #>
 
 # /// Locale settings
@@ -24,10 +28,6 @@
 
 # Unload PSReadline (@note, ince PSReadline is automatically loaded, we unload it first to do some configuration)
 Remove-Module -Name PSReadline
-
-# Set environment variables
-
-Set-Item -Path "env:GPG_TTY" -Value "$(tty)" # configure GPG_TTY such that gpg-agent can find the tty for passphrase input. @note, use `Get-Command -Name tty` to check whether the command is available
 
 # Set global variables
 
