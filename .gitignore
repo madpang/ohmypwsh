@@ -1,0 +1,5 @@
+# macOS temp files
+.DS_Store
+
+# Proprietary format docs
+*.key
