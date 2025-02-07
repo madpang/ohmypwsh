@@ -41,3 +41,10 @@ else {
 	'conf',
 	'common-pwsh-conf.ps1'
 ))
+
+# Clean up
+# ////////////////////////////////////////////////////////////
+
+# Remove variables
+Remove-Item -Path "variable:entry_point"
+Remove-Item -Path "variable:script_dir"
