@@ -13,7 +13,7 @@
 
 	@date:
 	- created on 2021-08-09
-	- updated on 2025-01-19
+	- updated on 2025-02-02
 #>
 
 # === Environment setup
@@ -36,29 +36,33 @@ Function Mount-RemoteVolume {
 		[Parameter(Mandatory = $true, ValueFromPipeline = $false)][string]$UserID,        # user identifier
 		[Parameter(Mandatory = $true, ValueFromPipeline = $false)][string]$UserPSW        # passphrase
 	)
-	if (-not (Test-Path $MountPoint -PathType Container)) { # Abort if the mount point already exists, since it may be local workspace
-		$mount_target = "//${UserID}:${UserPSW}@${HostID}/$([System.Web.HttpUtility]::UrlEncode($VolumeID))"
-		try {
-			New-Item -ItemType Directory -Path $MountPoint -ErrorAction Stop 1>$null
-			# Call system comamnd `mount`
-			if ("smbfs" -ne $VolumeType) { # Currently only support SMB protocol for shared volume mounting
-				throw "Volume type '$VolumeType' is not supported in this version."
-			}
-			mount -t smbfs $mount_target $MountPoint
-			if ($?) {
-				Write-Output "Successfully created mount point at '$MountPoint'."
-			} else {
-				throw "Failed to mount at '$MountPoint'."
-			}
-		} catch {
-			Write-Error $_.Exception.Message
-			# Clean up
-			if (Test-Path $MountPoint -PathType Container) {
-				Remove-Item -Path $MountPoint -Recurse -Force -ErrorAction SilentlyContinue
-			}
+	try {
+		# Abort if the mount point already exists, since it may be local workspace
+		if (Test-Path $MountPoint -PathType Container) {
+			throw [System.AccessViolationException]::new("Mount point '$MountPoint' already exists! Please take care!")
 		}
-	} else {
-		Write-Error "Mount point '$MountPoint' already exists! Please take care!"
+		# Currently only support SMB protocol for shared volume mounting
+		if ($VolumeType -ne "smbfs") { 
+			throw [System.ArgumentException]::New("Volume type '$VolumeType' is not supported in this version.")
+		}
+		# Call system comamnd `mount`
+		$mount_target = "//${UserID}:${UserPSW}@${HostID}/$([System.Web.HttpUtility]::UrlEncode($VolumeID))"
+		New-Item -ItemType Directory -Path $MountPoint -ErrorAction Stop 1>$null
+		mount -t smbfs $mount_target $MountPoint 2>$null
+		$exitCode = $LASTEXITCODE
+		if ($exitCode -eq 0) {
+			Write-Output "Successfully created mount point at '$MountPoint'."
+		} else {
+			throw [System.ApplicationException]::new("Failed to mount at '$MountPoint'.")
+		}
+	} catch [System.ApplicationException] {
+		# Clean up
+		if (Test-Path $MountPoint -PathType Container) {
+			Remove-Item -Path $MountPoint -Recurse -Force -ErrorAction SilentlyContinue
+		}
+		$PSCmdlet.ThrowTerminatingError($PSItem)
+	} catch {
+		$PSCmdlet.ThrowTerminatingError($PSItem)
 	}
 }
 

@@ -8,7 +8,7 @@
 
 	@date:
 	- created on 2021-08-09
-	- updated on 2025-01-19
+	- updated on 2025-02-02
 #>
 
 # === Function definition
@@ -19,15 +19,16 @@ Function Mount-Workspace {
 	param(
 		[Parameter(Mandatory = $true, ValueFromPipeline = $true, Position = 0)][string]$WkspID
 	)
-	$WKSP_INFO_FILE = "~/.ohmypwsh.d/workspace-info.asc" # GPG encrypted file of workspace information
 	try {
+		$WKSP_INFO_FILE = "~/.ohmypwsh.d/workspace-info.asc" # GPG encrypted file of workspace information
 		if (-not (Test-Path $WKSP_INFO_FILE -PathType Leaf)) {
-			throw "Workspace information file '$WKSP_INFO_FILE' does not exist."
+			throw [System.IO.FileNotFoundException]::new("Workspace information file '$WKSP_INFO_FILE' does not exist.")
 		}
 		# Decrypt the GPG encrypted file
 		$decrypted = gpg --decrypt $WKSP_INFO_FILE 2>$null
-		if (-not $?) {
-			throw "Failed to decrypt the workspace information file '$WKSP_INFO_FILE'."
+		$exitCode = $LASTEXITCODE
+		if ($exitCode -ne 0) {
+			throw [System.ApplicationException]::new("Failed to decrypt the workspace information file '$WKSP_INFO_FILE'.")
 		}
 		# Extract the JSON content marked by '+++ JSON' and '+++'
 		$json = @()
@@ -46,7 +47,7 @@ Function Mount-Workspace {
 		$wksp_info = ConvertFrom-Json ($json -join [System.Environment]::NewLine) -AsHashtable -ErrorAction Stop
 		# Mount the workspace using the retrieved information
 		if ($null -eq $wksp_info[$WkspID]) {
-			throw "Workspace $WkspID is not recognized, please confirm the information file at $WKSP_INFO_FILE."
+			throw [System.ArgumentException]::new("Workspace $WkspID is not recognized, please confirm the information file at $WKSP_INFO_FILE.")
 		}
 		# @note: the user should ensure the integrity of the workspace information
 		Mount-RemoteVolume `
@@ -55,9 +56,10 @@ Function Mount-Workspace {
 			-VolumeID $wksp_info[$WkspID].VolumeID `
 			-VolumeType $wksp_info[$WkspID].VolumeType `
 			-UserID $wksp_info[$WkspID].UserID `
-			-UserPSW $wksp_info[$WkspID].UserPSW
+			-UserPSW $wksp_info[$WkspID].UserPSW `
+			-ErrorAction Stop
 	} catch {
-		Write-Error $_.Exception.Message
+		Write-Error $_.Exception.Message -ErrorAction Stop
 	}
 }
 
