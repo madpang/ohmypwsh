@@ -192,16 +192,19 @@ For example, if `~/Workspace3` is a symbolic link to ` /Volumes/WKSP`, when I `c
 @brief:
 The exit code of the last command is eaten by the prompt.
 
-@status: TODO
+@status: DONE
 
 @date:
 - created on 2025-01-25
-- updated on 2025-01-26
+- updated on 2025-01-27
 
 @details:
 This issue is identified during the investigation of [Ticket 7].
 If `~/Workspace5` is not a mount point, executing the command `diskutil unmount Workspace5` will fail.
 While in a shell started w/ `pwsh --noprofile`, checking `$LASTEXITCODE` will return `1`, but in the `ohmypwsh` prompt, it will return `0`.
+
+The reason is that `$(pwd)` was used in the `prompt` function---where `pwd` is an external command---which will always return `0` as the exit code.
+To fix this, `$(pwd)` is replaced by `$PWD.ToString()`.
 
 === Ticket 10
 
