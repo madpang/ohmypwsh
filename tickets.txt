@@ -10,8 +10,8 @@ Create a oh-my-zsh inspired PowerShell custom prompt, w/ light/dark theme.
 @status: DONE
 
 @date:
-- initiated on 2024-11-16
-- updated on 2024-11-19
+- created on 2024-11-16
+- updated on 2024-11-23
 
 --- Ticket 1-1
 
@@ -21,8 +21,8 @@ Add proper color scheme for the 3 major fields of terminal prompt---user name, m
 @status: DONE
 
 @date:
-- initiated on 2024-11-16
-- updated on 2024-11-19
+- created on 2024-11-16
+- updated on 2024-11-23
 
 @details:
 Need to use a hashtable to hold each prompt color component in a separate field.
@@ -38,7 +38,7 @@ Configure the [PSReadline](https://github.com/PowerShell/PSReadLine) color schem
 @status: DONE
 
 @date:
-- initiated on 2024-11-23
+- created on 2024-11-23
 - updated on 2024-11-23
 
 @details:
@@ -47,3 +47,96 @@ I plan to use minimal color for the readline, since using many colors will only 
 As colors should only be used sporadically, they should be *pop-up*.
 As for the light theme, which will generally based on a white background, I prefer *blue* as the main color.
 As for the dark theme, which will generally based on a near-black background, I prefer *yellow* as the main color.
+
+=== Ticket 2
+
+@brief:
+Add `Mount-Workspace` command.
+
+@status: TODO
+
+@date:
+- created on 2025-01-16
+- updated on 2025-01-16
+
+@details:
+The command `Mount-Workspace` mounts remote storage into local file-system as "Workspace[\d]".
+This command should be *machine-dependent*, since each machine is used in specific setup (w/ different local Workspace, and available remote Workspaces).
+
+--- Ticket 2-1
+
+@brief:
+Add `Mount-Workspace` for my personal Mac to mount the routine remote workspace, as a pilot test.
+
+@date:
+- created on 2025-01-16
+- updated on 2025-01-18
+
+@status: TODO
+
+@details:
+- The function only handles a specific workspace Identifier `W4:`
+- It should hard-code NO secret in the script
+- The function call requires all parameters to be passed in, including the remote storage URL, the local mount point, and the username/password.
+
+--- Ticket 2-2
+
+@brief:
+Make `Mount-Workspace W4:` work as it is, w/o provide any additional parameters.
+
+@status: TODO
+
+@date:
+- created on 2025-01-18
+- updated on 2025-01-18
+
+@details:
+Need to devise a mechanism to auto handle the remote storage URL, the local mount point, and the username/password, in a secure way.
+
+=== Ticket 3
+
+@brief:
+Make sourcing device-dependent conf. script configurable.
+
+@status: TODO
+
+@date:
+- created on 2025-01-19
+- updated on 2025-01-19
+
+@details:
+Currently, the device-dependent conf. file name is hard-coded in the main script `pwshrc.ps1`---it is `device-00-pwsh-conf.ps1`.
+
+=== Ticket 4
+
+@brief:
+Redesign the prompt style, to be visually more appealing, and informative.
+
+@status: TODO
+
+@date:
+- created on 2025-01-19
+- updated on 2025-01-19
+
+@details:
+The current prompt is like 
++++ prompt example
+|-[user@machine: path][]
+: <command>
+|-[YYYY-MM-DDTHH:MM:SS+08:00][o][]
++++
+the density of this prompt is too high.
+
+=== Ticket 5
+
+@brief:
+Redesign the `Switch-Theme` function to be more user-friendly.
+
+@status: TODO
+
+@date:
+- created on 2025-01-19
+- updated on 2025-01-19
+
+@details:
+One needs to review the design principle---whether it should only use ANSI escape code feature, or it should be coupled w/ the Terminal app.
