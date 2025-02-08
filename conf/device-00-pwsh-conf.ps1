@@ -49,7 +49,7 @@ Function Mount-Workspace {
 			throw "Workspace $WkspID is not recognized, please confirm the information file at $WKSP_INFO_FILE."
 		}
 		# @note: the user should ensure the integrity of the workspace information
-		Mount-RemoteVolume -WkspID $WkspID `
+		Mount-RemoteVolume `
 			-MountPoint $wksp_info[$WkspID].MountPoint `
 			-HostID $wksp_info[$WkspID].HostID `
 			-VolumeID $wksp_info[$WkspID].VolumeID `
@@ -100,7 +100,7 @@ Function Remove-Workspace {
 			throw "Workspace $WkspID is not recognized, please confirm the information file at $WKSP_INFO_FILE."
 		}
 		# @note: the user should ensure the integrity of the workspace information
-		Remove-RemoteVolume -WkspID $WkspID -MountPoint $wksp_info[$WkspID].MountPoint
+		Remove-RemoteVolume -MountPoint $wksp_info[$WkspID].MountPoint
 	} catch {
 		Write-Error $_.Exception.Message
 	}

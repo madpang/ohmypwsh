@@ -53,7 +53,7 @@ As for the dark theme, which will generally based on a near-black background, I 
 @brief:
 Add `Mount-Workspace` command.
 
-@status: PROGRESSING
+@status: DONE
 
 @date:
 - created on 2025-01-16
@@ -75,23 +75,26 @@ Add `Mount-Workspace` for my personal Mac to mount the routine remote workspace,
 @status: DONE
 
 @details:
-- The function only handles a specific workspace Identifier `W4:`
+- The function only handles a specific workspace Identifier `W4`
 - It should hard-code NO secret in the script
 - The function call requires all parameters to be passed in, including the remote storage URL, the local mount point, and the username/password.
 
 --- Ticket 2-2
 
 @brief:
-Make `Mount-Workspace W4:` work as it is, w/o provide any additional parameters.
+Make `Mount-Workspace W4` work as it is, w/o provide any additional parameters.
 
-@status: PROGRESSING
+@status: DONE
 
 @date:
 - created on 2025-01-18
-- updated on 2025-01-18
+- updated on 2025-01-19
 
 @details:
-Need to devise a mechanism to auto handle the remote storage URL, the local mount point, and the username/password, in a secure way.
+By using an external JSON file, the function can auto load the parameters (w/o cache) per call, and fill all the necessary parameters for the `Mount-Workspace` function.
+As long as the JSON file is not exposed to the public, the secret info. should be safe.
+Beyonds that, I added one more layer of security---instead of reading info. from a plain JSON file, I use an GPG-encrypted JSON file, and decrypt it on-the-fly.
+This method fits well for the scenario of *device-dependent* `Mount-Workspace` function.
 
 === Ticket 3
 
