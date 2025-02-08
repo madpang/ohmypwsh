@@ -59,7 +59,7 @@ Function Mount-Workspace {
 			-UserPSW $wksp_info[$WkspID].UserPSW `
 			-ErrorAction Stop
 	} catch {
-		Write-Error $_.Exception.Message -ErrorAction Stop
+		$PSCmdlet.ThrowTerminatingError($PSItem)
 	}
 }
 
@@ -72,15 +72,16 @@ Function Remove-Workspace {
 	param(
 		[Parameter(Mandatory = $true, ValueFromPipeline = $false)][string]$WkspID # workspace identifier
 	)
-	$WKSP_INFO_FILE = "~/.ohmypwsh.d/workspace-info.asc" # GPG encrypted file of workspace information
 	try {
+		$WKSP_INFO_FILE = "~/.ohmypwsh.d/workspace-info.asc" # GPG encrypted file of workspace information
 		if (-not (Test-Path $WKSP_INFO_FILE -PathType Leaf)) {
-			throw "Workspace information file '$WKSP_INFO_FILE' does not exist."
+			throw [System.IO.FileNotFoundException]::new("Workspace information file '$WKSP_INFO_FILE' does not exist.")
 		}
 		# Decrypt the GPG encrypted file
 		$decrypted = gpg --decrypt $WKSP_INFO_FILE 2>$null
-		if (-not $?) {
-			throw "Failed to decrypt the workspace information file '$WKSP_INFO_FILE'."
+		$exitCode = $LASTEXITCODE
+		if ($exitCode -ne 0) {
+			throw [System.ApplicationException]::new("Failed to decrypt the workspace information file '$WKSP_INFO_FILE'.")
 		}
 		# Extract the JSON content marked by '+++ JSON' and '+++'
 		$json = @()
@@ -99,11 +100,11 @@ Function Remove-Workspace {
 		$wksp_info = ConvertFrom-Json ($json -join [System.Environment]::NewLine) -AsHashtable -ErrorAction Stop
 		# Un-mount the workspace using the retrieved information
 		if ($null -eq $wksp_info[$WkspID]) {
-			throw "Workspace $WkspID is not recognized, please confirm the information file at $WKSP_INFO_FILE."
+			throw [System.ArgumentException]::new("Workspace $WkspID is not recognized, please confirm the information file at $WKSP_INFO_FILE.")
 		}
 		# @note: the user should ensure the integrity of the workspace information
-		Remove-RemoteVolume -MountPoint $wksp_info[$WkspID].MountPoint
+		Remove-RemoteVolume -MountPoint $wksp_info[$WkspID].MountPoint -ErrorAction Stop
 	} catch {
-		Write-Error $_.Exception.Message
+		$PSCmdlet.ThrowTerminatingError($PSItem)
 	}
 }
