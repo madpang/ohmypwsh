@@ -50,9 +50,12 @@ New-Variable `
 		'Cayenne'    = '#941100';
 		'Ocean'      = '#005493';
 		'Midnight'   = '#011993';
-		'Lemon'      = '#FFFB00'
-		'Banana'     = '#FFFC79';
+		'Lemon'      = '#FFFB00';
+		'Spring'     = '#00F900';
+		'Turquoise'  = '#00FDFF';
 		'Salmon'     = '#FF7E79';
+		'Banana'     = '#FFFC79';
+		'Flora'      = '#73FA79';
 		'Spindrift'  = '#73FCD6';
 		'Sky'        = '#76D6FF';
 		'Strawberry' = '#FF2F92';
