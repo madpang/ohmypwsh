@@ -224,7 +224,7 @@ function prompt {
 			("`e[48;2;$($Global:PD_PROMPT_COLOR['BG_AUX']);38;2;$($Global:PD_PROMPT_COLOR['FG_AUX'])m" + '@') +
 			("`e[48;2;$($Global:PD_PROMPT_COLOR['BG_MACHINE']);38;2;$($Global:PD_PROMPT_COLOR['FG_MACHINE'])m" + $Global:PD_PROMPT_MACHINE) +
 			("`e[48;2;$($Global:PD_PROMPT_COLOR['BG_AUX']);38;2;$($Global:PD_PROMPT_COLOR['FG_AUX'])m" + ':') +
-			("`e[48;2;$($Global:PD_PROMPT_COLOR['BG_PATH']);38;2;$($Global:PD_PROMPT_COLOR['FG_PATH'])m" + $(pwd)) +
+			("`e[48;2;$($Global:PD_PROMPT_COLOR['BG_PATH']);38;2;$($Global:PD_PROMPT_COLOR['FG_PATH'])m" + $PWD.ToString()) +
 			"`e[0m"
 		),
 		']',
