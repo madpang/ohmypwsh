@@ -78,7 +78,7 @@ Function Remove-RemoteVolume {
 		[Parameter(Mandatory = $true, ValueFromPipeline = $false)][string]$WkspID,      # workspace identifier
 		[Parameter(Mandatory = $true, ValueFromPipeline = $false)][string]$MountPoint   # mount point
 	)
-	if ("W4:" -eq $WkspID) { # Currently only support W4:
+	if ("W4" -eq $WkspID) { # Currently only support W4:
 		if (-not (Test-Path $MountPoint -PathType Container)) { # Abort if the mount point does not exist
 			Write-Error "The specified mount point '$MountPoint' does not exist or is not mounted."
 			return
