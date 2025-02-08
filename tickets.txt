@@ -101,14 +101,14 @@ This method fits well for the scenario of *device-dependent* `Mount-Workspace` f
 @brief:
 Make sourcing device-dependent conf. script configurable.
 
-@status: TODO
+@status: DONE
 
 @date:
 - created on 2025-01-19
-- updated on 2025-01-19
+- updated on 2025-01-26
 
 @details:
-Currently, the device-dependent conf. file name is hard-coded in the main script `pwshrc.ps1`---it is `device-00-pwsh-conf.ps1`.
+See README [Usage] -> [To add device-dependent configurations] for details.
 
 === Ticket 4
 
