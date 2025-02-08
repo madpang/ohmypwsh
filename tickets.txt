@@ -53,7 +53,7 @@ As for the dark theme, which will generally based on a near-black background, I 
 @brief:
 Add `Mount-Workspace` command.
 
-@status: TODO
+@status: PROGRESSING
 
 @date:
 - created on 2025-01-16
@@ -72,7 +72,7 @@ Add `Mount-Workspace` for my personal Mac to mount the routine remote workspace,
 - created on 2025-01-16
 - updated on 2025-01-18
 
-@status: TODO
+@status: DONE
 
 @details:
 - The function only handles a specific workspace Identifier `W4:`
