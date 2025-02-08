@@ -245,11 +245,11 @@ NOTE, reading the encrypted workspace information file will prompt for the passp
 @brief:
 Bug report, `Mount-RemoteVolume` spit internal error when `mount` fails.
 
-@status: TODO
+@status: PROGRESSING
 
 @date:
 - created on 2025-01-26
-- updated on 2025-01-26
+- updated on 2025-02-02
 
 @details:
 When calling `Mount-Workspace W4` (which calls `Mount-RemoteVolume`), if the remote volume is not available, the `mount` command will fail, and the function will spit an internal error.
@@ -263,6 +263,34 @@ Line |
      | Failed to mount at '~/Workspace4'.
 +++
 which is NOT a graceful handling of the error.
+
+I find the reason is that `Write-Error` generates non-terminating error (when used w/o `-ErrorAction Stop`), which do not trigger the `catch`.
+Therefore, the error propagates to the caller, and leaves a call stack in the console.
+This behavior is described in PowerShell's document---[Everything you wanted to know about exceptions]---which states
+>>>
+The one thing that I don't like about using throw for raw exceptions is that the error message points at the throw statement and indicates that line is where the problem is.
++++ console output
+Unable to find the specified file.
+At line:31 char:9
++         throw [System.IO.FileNotFoundException]::new()
++         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (:) [], FileNotFoundException
+    + FullyQualifiedErrorId : Unable to find the specified file.
++++
+Having the error message tell me that my script is broken because I called throw on line 31 is a bad message for users of your script to see. It doesn't tell them anything useful.
+<<<
+It describes the exact situation I am facing.
+
+Basically, I am using the technique of `$PSCmdlet.ThrowTerminatingError($PSItem)`, which is described in the document as
+>>>
+One nuance of $PSCmdlet.ThrowTerminatingError() is that it creates a terminating error within your Cmdlet but it turns into a non-terminating error after it leaves your Cmdlet. This leaves the burden on the caller of your function to decide how to handle the error. They can turn it back into a terminating error by using -ErrorAction Stop or calling it from within a try{...}catch{...}.
+<<<
+as well as *typed exception* to address the issue of this ticket.
+
+@see:
+- [Everything you wanted to know about exceptions](https://learn.microsoft.com/en-us/powershell/scripting/learn/deep-dives/everything-about-exceptions?view=powershell-7.4)
+- [about_Try_Catch_Finally](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_try_catch_finally?view=powershell-7.4)
+- [Write-Error](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/write-error?view=powershell-7.4)
 
 === Ticket 13
 
