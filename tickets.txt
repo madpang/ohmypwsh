@@ -269,11 +269,18 @@ which is NOT a graceful handling of the error.
 @brief:
 Implement `open` command on Linux to open folder at current directory in GUI.
 
-@status: TODO
+@status: DONE
 
 @date:
 - created on 2025-02-02
-- updated on 2025-02-02
+- updated on 2025-02-03
+
+@details:
+On Linux, the equivalent command to `open` on macOS is `xdg-open`.
+According to its man page
+> xdg-open opens a file or URL in the user's preferred application.
+and on Ubuntu, it actually opens `nautilus`---the default file manager.
 
 @see:
 - [Question on StackExchange](https://askubuntu.com/questions/265641/how-to-open-a-folder-with-gui-from-terminal)
+- man page of `xdg-open`
