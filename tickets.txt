@@ -149,14 +149,15 @@ One needs to review the design principle---whether it should only use ANSI escap
 @brief:
 Bug report, `Remove-Workspace` fails if the workspace is not mounted.
 
-@status: TODO
+@status: DONE
 
 @date:
 - created on 2025-01-25
-- updated on 2025-01-25
+- updated on 2025-01-26
 
 @details:
 If the directory---e.g. `~/Workspace4`---is not a mount point, but merely a local directory, the `Remove-Workspace` function will fail.
+In this case, the function should not just fail, but clean up the directory, and print a message to the user.
 
 === Ticket 7
 

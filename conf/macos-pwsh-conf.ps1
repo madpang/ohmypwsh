@@ -65,30 +65,36 @@ Function Mount-RemoteVolume {
 # @brief: Un-mount remote shared storage from local file system
 # @note:
 # - This function utilizes the macOS built-in (BSD) `umount`, make sure the path is properly set
+# @details:
+# The manpage of `umount` suggests using `diskutil`, due to the complexity of the macOS file system.
 # @see:
-# - `man umount`
 # - `man diskutil`
+# - `man umount`
 Function Remove-RemoteVolume {
 	param(
 		[Parameter(Mandatory = $true, ValueFromPipeline = $false)][string]$MountPoint   # mount point
 	)
 	if (-not (Test-Path $MountPoint -PathType Container)) { # Abort if the mount point does not exist
-		Write-Error "The specified mount point '$MountPoint' does not exist or is not mounted."
+		Write-Error "The specified mount point '$MountPoint' does not exist or is not a valid directory."
 		return
 	}
 	try {
-		# Call system command `umount`
-		umount $MountPoint 2>$null
-		if (-not $?) {
-			# Fallback mechanism for force un-mounting
-			diskutil unmount force $MountPoint
-			if (-not $?) {
-				throw "Failed to unmount '$MountPoint'."
+		diskutil unmount $MountPoint 2>$null
+		$exitCode = $LASTEXITCODE
+		if ($exitCode -eq 0) {
+			# Successfully unmounted; clean up the directory
+			Remove-Item -Path $MountPoint -ErrorAction Stop
+			Write-Output "Successfully unmounted '$MountPoint' and cleaned up the directory."
+		} else {
+			# Fallback check: Is the directory empty?
+			if (-not (Test-Path ([IO.Path]::Combine($MountPoint, '*')))) {
+				# If it is an empty folder, delete the directory
+				Remove-Item -Path $MountPoint -ErrorAction Stop
+				Write-Output "Unmount failed, but '$MountPoint' was empty and has been cleaned up."
+			} else {
+				throw "Failed to unmount '$MountPoint' (exit code: $exitCode), and it is NON-EMPTY."
 			}
 		}
-		# Clean up
-		Remove-Item -Path $MountPoint -ErrorAction Stop
-		Write-Output "Successfully unmounted '$MountPoint' and cleaned up the directory."
 	} catch {
 		Write-Error $_.Exception.Message
 	}
