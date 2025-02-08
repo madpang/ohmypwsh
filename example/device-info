@@ -1,0 +1,16 @@
++++ header
+@file: device-info
+@brief: A plain text file that contains non-sensitive information about the device.
+@author: foobar <your_address@email.com>
+@date:
+- created on 2025-01-26
+- updated on 2025-01-26
++++
+
++++ JSON
+{
+	"Your-Machine-Name": {
+		ConfPath: "device-00-pwsh-conf.ps1"
+	}
+}
++++

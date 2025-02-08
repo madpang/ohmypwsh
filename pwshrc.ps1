@@ -1,4 +1,6 @@
 <# 
+	@file: ohmypwsh/pwshrc.ps1
+
 	@brief:
 	Entry point for a PowerShell profile script that is loaded at start time.
 
@@ -15,19 +17,19 @@
 
 	@date:
 	- created on 2021-06-08
-	- updated on 2025-01-16
+	- updated on 2025-01-26
 #>
 
 # === Get the execution path
 
-$entry_point = Get-ItemProperty $MyInvocation.MyCommand.Path
-if ($null -ne $entry_point.Target)
+$_entry_point = Get-ItemProperty $MyInvocation.MyCommand.Path
+if ($null -ne $_entry_point.Target)
 {
 	# If it is called via a symbolic link
-	$script_dir = Split-Path $entry_point.Target -Parent
+	$_script_dir = Split-Path $_entry_point.Target -Parent
 } else {
 	# If it is called directly
-	$script_dir = $entry_point.Directory.FullName
+	$_script_dir = $_entry_point.Directory.FullName
 }
 
 # === Load workspace settings
@@ -37,34 +39,56 @@ if ($null -ne $entry_point.Target)
 
 # --- Common setup for all platforms
 . ([System.IO.Path]::Combine(
-	$script_dir,
+	$_script_dir,
 	'conf',
 	'common-pwsh-conf.ps1'
 ))
 
 # --- Platform specific setup
 . ([IO.Path]::Combine(
-	$script_dir,
+	$_script_dir,
 	'conf',
 	($IsMacOS ? 'macos' : ($IsWindows ? 'windows' : 'linux')) + '-pwsh-conf.ps1'
 ))
 
 # --- Device specific setup
 
-$device_specific_conf = [IO.Path]::Combine(
-	$script_dir,
-	'conf',
-	'device-00' + '-pwsh-conf.ps1' # @todo: ([Environment]::MachineName) + '-pwsh-conf.ps1'
-)
-# load device specific configuration if it exists
-if (Test-Path -Path $device_specific_conf -PathType Leaf)
-{
-	. $device_specific_conf
+$_device_info_file = "~/.ohmypwsh.d/device-info" # plain text file of device information
+
+if (Test-Path -Path $_device_info_file -PathType Leaf) {
+	# Extract the JSON content marked by '+++ JSON' and '+++'
+	$_json = @()
+	$_flag = $false
+	Get-Content -Path $_device_info_file | ForEach-Object {
+		if ('+++' -eq $_)
+		{
+			$_flag = $false
+		}
+		if ($_flag)
+		{
+			$_json += $_
+		}
+		if ('+++ JSON' -eq $_)
+		{
+			$_flag = $true
+		}
+	}
+	$_device_info = ConvertFrom-Json ($_json -join [System.Environment]::NewLine) -AsHashtable -ErrorAction Stop
+	if ($null -ne $_device_info[[Environment]::MachineName]) {
+		$_device_specific_conf = [IO.Path]::Combine(
+			$_script_dir,
+			'conf',
+			$_device_info[[Environment]::MachineName].ConfPath
+		)
+		# Load device specific configuration if it exists
+		if (Test-Path -Path $_device_specific_conf -PathType Leaf)
+		{
+			. $_device_specific_conf
+		}
+	}
 }
 
 # === Clean up
 
-# Remove temporary variables
-Remove-Item -Path "Variable:entry_point"
-Remove-Item -Path "Variable:script_dir"
-Remove-Item -Path "Variable:device_specific_conf"
+# Remove temporary variables that starts with '_'
+Remove-Variable -Name "_*"
