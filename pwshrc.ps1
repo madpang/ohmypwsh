@@ -1,6 +1,6 @@
 <# 
-	@brief: 
-	PowerShell profile script that is loaded at start time.
+	@brief:
+	Entry point for a PowerShell profile script that is loaded at start time.
 
 	@details:
 	To use this script,
@@ -15,43 +15,56 @@
 
 	@date:
 	- created on 2021-06-08
-	- updated on 2024-03-13
+	- updated on 2025-01-16
 #>
 
-# Get the execution path
-# ////////////////////////////////////////////////////////////
+# === Get the execution path
+
 $entry_point = Get-ItemProperty $MyInvocation.MyCommand.Path
-if ($null -ne $entry_point.Target) { # It is called via a symbolic link
+if ($null -ne $entry_point.Target)
+{
+	# If it is called via a symbolic link
 	$script_dir = Split-Path $entry_point.Target -Parent
-}
-else {
+} else {
+	# If it is called directly
 	$script_dir = $entry_point.Directory.FullName
 }
 
-# Load workspace settings
-# ////////////////////////////////////////////////////////////
+# === Load workspace settings
 # @todo
 
-# Load external modules
-# ////////////////////////////////////////////////////////////
+# === Load external modules
 
-# Common setup for all platforms
+# --- Common setup for all platforms
 . ([System.IO.Path]::Combine(
 	$script_dir,
 	'conf',
 	'common-pwsh-conf.ps1'
 ))
 
-# Platform-dependent setup
+# --- Platform specific setup
 . ([IO.Path]::Combine(
 	$script_dir,
 	'conf',
 	($IsMacOS ? 'macos' : ($IsWindows ? 'windows' : 'linux')) + '-pwsh-conf.ps1'
 ))
 
-# Clean up
-# ////////////////////////////////////////////////////////////
+# --- Device specific setup
 
-# Remove variables
-Remove-Item -Path "variable:entry_point"
-Remove-Item -Path "variable:script_dir"
+$device_specific_conf = [IO.Path]::Combine(
+	$script_dir,
+	'conf',
+	'device-00' + '-pwsh-conf.ps1' # @todo: ([Environment]::MachineName) + '-pwsh-conf.ps1'
+)
+# load device specific configuration if it exists
+if (Test-Path -Path $device_specific_conf -PathType Leaf)
+{
+	. $device_specific_conf
+}
+
+# === Clean up
+
+# Remove temporary variables
+Remove-Item -Path "Variable:entry_point"
+Remove-Item -Path "Variable:script_dir"
+Remove-Item -Path "Variable:device_specific_conf"
