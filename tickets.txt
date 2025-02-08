@@ -7,7 +7,7 @@
 @brief:
 Create a oh-my-zsh inspired PowerShell custom prompt, w/ light/dark theme.
 
-@status: TODO
+@status: PROGRESSING
 
 @date:
 - initiated on 2024-11-16
@@ -18,7 +18,7 @@ Create a oh-my-zsh inspired PowerShell custom prompt, w/ light/dark theme.
 @brief:
 Add proper color scheme for the 3 major fields of terminal prompt---user name, machine name, and path.
 
-@status: TODO
+@status: PROGRESSING
 
 @date:
 - initiated on 2024-11-16
@@ -35,7 +35,7 @@ Given those experience tweaking w/ system-wide theme altogether, I decide this f
 @brief:
 Configure the [PSReadline](https://github.com/PowerShell/PSReadLine) color scheme to suit my light/dark theme.
 
-@status: TODO
+@status: PROGRESSING
 
 @date:
 - initiated on 2024-11-23
@@ -45,3 +45,4 @@ Configure the [PSReadline](https://github.com/PowerShell/PSReadLine) color schem
 Although the PSReadLine affects most of the "readline", not rigorously the prompt itself, together w/ the prompt, it is important for the user experience (UX) in the Read–eval–print loop (REPL) framework. Therefore, I consider this as a sub-task for creating the light/dark theme.
 I plan to use minimal color for the readline, since using many colors will only result in a visual chaos.
 As colors should only be used sporadically, they should be *pop-up*.
+As for the light theme, which will generally based on a white background, I prefer *blue* as the main color.
