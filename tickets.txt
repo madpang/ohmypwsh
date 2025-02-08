@@ -143,3 +143,119 @@ Redesign the `Switch-Theme` function to be more user-friendly.
 
 @details:
 One needs to review the design principle---whether it should only use ANSI escape code feature, or it should be coupled w/ the Terminal app.
+
+=== Ticket 6
+
+@brief:
+Bug report, `Remove-Workspace` fails if the workspace is not mounted.
+
+@status: TODO
+
+@date:
+- created on 2025-01-25
+- updated on 2025-01-25
+
+@details:
+If the directory---e.g. `~/Workspace4`---is not a mount point, but merely a local directory, the `Remove-Workspace` function will fail.
+
+=== Ticket 7
+
+@brief:
+Request for a installation script.
+
+@status: TODO
+
+@date:
+- created on 2025-01-25
+- updated on 2025-01-25
+
+@details:
+The installation script should be able to install the `ohmypwsh` package to a new machine, and configure the device-dependent conf. file.
+
+=== Ticket 8
+
+@brief:
+Make path displayed in the prompt respect symbolic links.
+
+@status: TODO
+
+@date:
+- created on 2025-01-25
+- updated on 2025-01-25
+
+@details:
+Currently, the path displayed in the prompt is the real path, not the symbolic link path.
+For example, if `~/Workspace3` is a symbolic link to ` /Volumes/WKSP`, when I `cd ~/Workspace3`, the prompt will show `/Volumes/WKSP`, not `~/Workspace3`.
+
+=== Ticket 9
+
+@brief:
+The exit code of the last command is eaten by the prompt.
+
+@status: TODO
+
+@date:
+- created on 2025-01-25
+- updated on 2025-01-26
+
+@details:
+This issue is identified during the investigation of [Ticket 7].
+If `~/Workspace5` is not a mount point, executing the command `diskutil unmount Workspace5` will fail.
+While in a shell started w/ `pwsh --noprofile`, checking `$LASTEXITCODE` will return `1`, but in the `ohmypwsh` prompt, it will return `0`.
+
+=== Ticket 10
+
+@brief:
+Limit the prompt length.
+
+@status: TODO
+
+@date:
+- created on 2025-01-26
+- updated on 2025-01-26
+
+@details:
+The current prompt has no control on the total length.
+When the path is deep, it may get auto-wrapped, leading to a messy display.
+
+=== Ticket 11
+
+@brief:
+Make `Remove-Workspace` no need to read the encrypted workspace information file for every run.
+
+@status: TODO
+
+@date:
+- created on 2025-01-26
+- updated on 2025-01-26
+
+@details:
+Removing a workspace should NOT need user name or password.
+It only needs to know the mount point, given a user defined workspace ID.
+So, if the ID is cached, the function should be able to remove the workspace w/o reading the encrypted workspace information file.
+
+NOTE, reading the encrypted workspace information file will prompt for the passphrase, an avoiding it is an improvement on UX.
+
+=== Ticket 12
+
+@brief:
+Bug report, `Mount-RemoteVolume` spit internal error when `mount` fails.
+
+@status: TODO
+
+@date:
+- created on 2025-01-26
+- updated on 2025-01-26
+
+@details:
+When calling `Mount-Workspace W4` (which calls `Mount-RemoteVolume`), if the remote volume is not available, the `mount` command will fail, and the function will spit an internal error.
++++ console output
+mount_smbfs: server connection failed: No route to host
+mount: /Users/foo/Workspace4 failed with 68
+Mount-RemoteVolume: /Volumes/WKSP/git-repo/ohmypwsh/conf/device-00-pwsh-conf.ps1:52
+Line |
+  52 |          Mount-RemoteVolume `
+     |          ~~~~~~~~~~~~~~~~~~~~
+     | Failed to mount at '~/Workspace4'.
++++
+which is NOT a graceful handling of the error.
