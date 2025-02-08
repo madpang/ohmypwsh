@@ -78,11 +78,12 @@ Function Remove-RemoteVolume {
 	param(
 		[Parameter(Mandatory = $true, ValueFromPipeline = $false)][string]$MountPoint   # mount point
 	)
-	if (-not (Test-Path $MountPoint -PathType Container)) { # Abort if the mount point does not exist
-		Write-Error "The specified mount point '$MountPoint' does not exist or is not a valid directory."
-		return
-	}
 	try {
+		# Abort if the mount point does not exist
+		if (-not (Test-Path $MountPoint -PathType Container)) {
+			throw [System.IO.DirectoryNotFoundException]::new("The specified mount point '$MountPoint' does not exist or is not a valid directory.")
+		}
+		# Call system comamnd `mount`
 		diskutil unmount $MountPoint 2>$null
 		$exitCode = $LASTEXITCODE
 		if ($exitCode -eq 0) {
@@ -96,10 +97,10 @@ Function Remove-RemoteVolume {
 				Remove-Item -Path $MountPoint -ErrorAction Stop
 				Write-Output "Unmount failed, but '$MountPoint' was empty and has been cleaned up."
 			} else {
-				throw "Failed to unmount '$MountPoint' (exit code: $exitCode), and it is NON-EMPTY."
+				throw [System.ApplicationException]::new("Failed to unmount '$MountPoint' (exit code: $exitCode), and it is NON-EMPTY.")
 			}
 		}
 	} catch {
-		Write-Error $_.Exception.Message
+		$PSCmdlet.ThrowTerminatingError($PSItem)
 	}
 }

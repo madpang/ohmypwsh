@@ -245,7 +245,7 @@ NOTE, reading the encrypted workspace information file will prompt for the passp
 @brief:
 Bug report, `Mount-RemoteVolume` spit internal error when `mount` fails.
 
-@status: PROGRESSING
+@status: DONE
 
 @date:
 - created on 2025-01-26
