@@ -44,6 +44,9 @@ Set-Variable `
 	-Value @{
 		'Licorice'   = '#000000';
 		'Lead'       = '#212121';
+		'Snow'       = '#FFFFFF';
+		'Cayenne'    = '#941100';
+		'Ocean'      = '#005493';
 		'Banana'     = '#FFFC79';
 		'Salmon'     = '#FF7E79';
 		'Spindrift'  = '#73FCD6';
@@ -161,11 +164,11 @@ function prompt {
 		'|-',
 		'[',
 		(
-			("`e[48;2;$((Convert-HexColorToANSI $Global:PD_COLOR_PALLETE['Banana']))m" + $Global:PD_PROMPT_USER) +
-			("`e[48;2;$((Convert-HexColorToANSI $Global:PD_COLOR_PALLETE['Silver']))m" + '@') +
-			("`e[48;2;$((Convert-HexColorToANSI $Global:PD_COLOR_PALLETE['Salmon']))m" + $Global:PD_PROMPT_MACHINE) +
-			("`e[48;2;$((Convert-HexColorToANSI $Global:PD_COLOR_PALLETE['Silver']))m" + ':') +
-			("`e[48;2;$((Convert-HexColorToANSI $Global:PD_COLOR_PALLETE['Spindrift']))m" + $(pwd)) +
+			("`e[48;2;$((Convert-HexColorToANSI $Global:PD_COLOR_PALLETE['Ocean']));38;2;$((Convert-HexColorToANSI $Global:PD_COLOR_PALLETE['Snow']))m" + $Global:PD_PROMPT_USER) +
+			("`e[48;2;$((Convert-HexColorToANSI $Global:PD_COLOR_PALLETE['Licorice']));38;2;$((Convert-HexColorToANSI $Global:PD_COLOR_PALLETE['Snow']))m" + '@') +
+			("`e[48;2;$((Convert-HexColorToANSI $Global:PD_COLOR_PALLETE['Snow']));38;2;$((Convert-HexColorToANSI $Global:PD_COLOR_PALLETE['Licorice']))m" + $Global:PD_PROMPT_MACHINE) +
+			("`e[48;2;$((Convert-HexColorToANSI $Global:PD_COLOR_PALLETE['Licorice']));38;2;$((Convert-HexColorToANSI $Global:PD_COLOR_PALLETE['Snow']))m" + ':') +
+			("`e[48;2;$((Convert-HexColorToANSI $Global:PD_COLOR_PALLETE['Cayenne']));38;2;$((Convert-HexColorToANSI $Global:PD_COLOR_PALLETE['Snow']))m" + $(pwd)) +
 			"`e[0m"
 		),
 		']',
@@ -200,7 +203,7 @@ $PSReadLineOptions = @{
 	EditMode = "Emacs";
 	HistoryNoDuplicates = $true;
 	HistorySearchCursorMovesToEnd = $true;
-	Colors = Get-Theme('light')
+	Colors = Get-Theme('dark')
 }
 Set-PSReadLineOption @PSReadLineOptions
 # Set PSReadline key handlers
